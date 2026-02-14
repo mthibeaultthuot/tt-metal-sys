@@ -1,0 +1,17 @@
+[package]
+name = "tt-metal"
+version = "0.1.0"
+edition = "2021"
+description = "Rust bindings for Tenstorrent tt-metal kernel compilation and execution"
+
+[build-dependencies]
+cc = "1"
+regex-lite = "0.1"
+
+[[example]]
+name = "hello_kernel"
+path = "examples/hello_kernel.rs"
+
+[[example]]
+name = "add_two_ints"
+path = "examples/add_two_ints.rs"
