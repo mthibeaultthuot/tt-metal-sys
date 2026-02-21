@@ -12,11 +12,15 @@ fn add_include(build: &mut cc::Build, seen: &mut HashSet<String>, path: &std::pa
 }
 
 fn main() {
-    let tt_metal_home = env::var("TT_METAL_HOME")
-        .unwrap_or_else(|_| {
-            let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-            manifest.parent().unwrap().join("tt-metal").to_string_lossy().into_owned()
-        });
+    let tt_metal_home = env::var("TT_METAL_HOME").unwrap_or_else(|_| {
+        let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+        manifest
+            .parent()
+            .unwrap()
+            .join("tt-metal")
+            .to_string_lossy()
+            .into_owned()
+    });
 
     let tt_metal_home = PathBuf::from(&tt_metal_home);
 
@@ -33,12 +37,27 @@ fn main() {
         .file("cpp/wrapper.cpp")
         .include("cpp");
 
-    add_include(&mut build, &mut seen, &tt_metal_home.join("tt_metal").join("api"));
-    add_include(&mut build, &mut seen, &tt_metal_home.join("tt_metal").join("hostdevcommon").join("api"));
+    add_include(
+        &mut build,
+        &mut seen,
+        &tt_metal_home.join("tt_metal").join("api"),
+    );
+    add_include(
+        &mut build,
+        &mut seen,
+        &tt_metal_home
+            .join("tt_metal")
+            .join("hostdevcommon")
+            .join("api"),
+    );
     add_include(&mut build, &mut seen, &tt_metal_home.join("tt_metal"));
     add_include(&mut build, &mut seen, &tt_metal_home);
     add_include(&mut build, &mut seen, &tt_metal_home.join("tt_stl"));
-    add_include(&mut build, &mut seen, &tt_metal_home.join("build").join("include"));
+    add_include(
+        &mut build,
+        &mut seen,
+        &tt_metal_home.join("build").join("include"),
+    );
 
     let compile_commands = tt_metal_home.join("build").join("compile_commands.json");
     if compile_commands.exists() {
@@ -83,23 +102,41 @@ fn main() {
         }
     }
 
-    add_include(&mut build, &mut seen, &tt_metal_home.join("tt_metal/third_party/umd/device/api"));
-    add_include(&mut build, &mut seen, &tt_metal_home.join("tt_metal/third_party/umd/device"));
-    add_include(&mut build, &mut seen, &tt_metal_home.join("tt_metal/third_party/umd/device/common"));
-    add_include(&mut build, &mut seen, &tt_metal_home.join("build/tt_metal/third_party/umd/device"));
+    add_include(
+        &mut build,
+        &mut seen,
+        &tt_metal_home.join("tt_metal/third_party/umd/device/api"),
+    );
+    add_include(
+        &mut build,
+        &mut seen,
+        &tt_metal_home.join("tt_metal/third_party/umd/device"),
+    );
+    add_include(
+        &mut build,
+        &mut seen,
+        &tt_metal_home.join("tt_metal/third_party/umd/device/common"),
+    );
+    add_include(
+        &mut build,
+        &mut seen,
+        &tt_metal_home.join("build/tt_metal/third_party/umd/device"),
+    );
 
     if let Ok(arch) = env::var("ARCH_NAME") {
         build.define("ARCH_NAME", arch.as_str());
     }
 
-    build
-        .warnings(false)
-        .compile("tt_metal_wrapper");
+    build.warnings(false).compile("tt_metal_wrapper");
 
     println!("cargo:rustc-link-search=native={}", lib_dir.display());
-    println!("cargo:rustc-link-search=native={}", tt_metal_home.join("build").join("lib").display());
+    println!(
+        "cargo:rustc-link-search=native={}",
+        tt_metal_home.join("build").join("lib").display()
+    );
     println!("cargo:rustc-link-lib=dylib=tt_metal");
     println!("cargo:rustc-link-lib=dylib=device");
+    println!("cargo:rustc-link-lib=dylib=fmt");
     println!("cargo:rustc-link-lib=dylib=stdc++");
 
     println!("cargo:rerun-if-changed=cpp/wrapper.cpp");
