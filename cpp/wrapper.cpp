@@ -388,7 +388,7 @@ void ttrs_compile_program(tt_device* device, tt_program* program, tt_result* res
 
 void ttrs_launch_program(tt_device* device, tt_program* program, int wait_for_completion, tt_result* result) {
     try {
-        detail::LaunchProgram(device->ptr, program->inner, wait_for_completion != 0);
+        detail::LaunchProgram(device->ptr, program->inner, wait_for_completion != 0, true);
         result_ok(result);
     } catch (const std::exception& e) {
         result_err_exception(result, e);
