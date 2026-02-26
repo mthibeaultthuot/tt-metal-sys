@@ -110,6 +110,7 @@ typedef struct {
 typedef struct {
     uint8_t buffer_index;
     tt_data_format data_format;
+    uint32_t page_size;
 } tt_cb_data_format_entry;
 
 typedef struct {

@@ -297,6 +297,9 @@ tt_cb_handle ttrs_create_circular_buffer(
         }
 
         CircularBufferConfig cb_config(config->total_size, data_format_spec);
+        for (size_t i = 0; i < config->data_format_spec_len; i++) {
+            cb_config.set_page_size(config->data_format_spec[i].buffer_index, config->data_format_spec[i].page_size);
+        }
         auto cr = to_core_range(core_range);
         auto handle = CreateCircularBuffer(program->inner, cr, cb_config);
         result_ok(result);

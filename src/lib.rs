@@ -234,10 +234,11 @@ impl CbDataFormatSpec {
         }
     }
 
-    pub fn add(mut self, buffer_index: u8, format: DataFormat) -> Self {
+    pub fn add(mut self, buffer_index: u8, format: DataFormat, page_size: u32) -> Self {
         self.entries.push(ffi::TtCbDataFormatEntry {
             buffer_index,
             data_format: format,
+            page_size,
         });
         self
     }

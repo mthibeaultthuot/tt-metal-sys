@@ -155,6 +155,7 @@ pub struct TtKernelConfig {
 pub struct TtCbDataFormatEntry {
     pub buffer_index: u8,
     pub data_format: TtDataFormat,
+    pub page_size: u32,
 }
 
 #[repr(C)]
