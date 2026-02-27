@@ -16,6 +16,10 @@ fn has_tt_metal_sdk(tt_metal_home: &PathBuf) -> bool {
 }
 
 fn main() {
+    // Always re-run when these env vars change, regardless of stub vs real mode.
+    println!("cargo:rerun-if-env-changed=TT_METAL_HOME");
+    println!("cargo:rerun-if-env-changed=TT_METAL_LIB_DIR");
+
     let tt_metal_home = env::var("TT_METAL_HOME").unwrap_or_else(|_| {
         let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
         manifest
@@ -163,6 +167,4 @@ fn main() {
 
     println!("cargo:rerun-if-changed=cpp/wrapper.cpp");
     println!("cargo:rerun-if-changed=cpp/wrapper.hpp");
-    println!("cargo:rerun-if-env-changed=TT_METAL_HOME");
-    println!("cargo:rerun-if-env-changed=TT_METAL_LIB_DIR");
 }
