@@ -11,6 +11,10 @@ fn add_include(build: &mut cc::Build, seen: &mut HashSet<String>, path: &std::pa
     }
 }
 
+fn has_tt_metal_sdk(tt_metal_home: &PathBuf) -> bool {
+    tt_metal_home.join("tt_metal").exists() || std::env::var("TT_METAL_HOME").is_ok()
+}
+
 fn main() {
     let tt_metal_home = env::var("TT_METAL_HOME").unwrap_or_else(|_| {
         let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
@@ -23,6 +27,24 @@ fn main() {
     });
 
     let tt_metal_home = PathBuf::from(&tt_metal_home);
+
+    if !has_tt_metal_sdk(&tt_metal_home) {
+        println!("cargo:warning=Tenstorrent SDK not found, building stub mode");
+
+        let mut build = cc::Build::new();
+        build
+            .cpp(true)
+            .std("c++17")
+            .file("cpp/wrapper_stub.cpp")
+            .include("cpp")
+            .warnings(false)
+            .compile("tt_metal_wrapper");
+
+        println!("cargo:rustc-link-lib=dylib=stdc++");
+        println!("cargo:rerun-if-changed=cpp/wrapper_stub.cpp");
+        println!("cargo:rerun-if-changed=cpp/wrapper.hpp");
+        return;
+    }
 
     let lib_dir = env::var("TT_METAL_LIB_DIR")
         .map(PathBuf::from)
