@@ -44,7 +44,13 @@ fn main() {
             .warnings(false)
             .compile("tt_metal_wrapper");
 
+        // On macOS, use c++ instead of stdc++
+        #[cfg(target_os = "macos")]
+        println!("cargo:rustc-link-lib=dylib=c++");
+
+        #[cfg(not(target_os = "macos"))]
         println!("cargo:rustc-link-lib=dylib=stdc++");
+
         println!("cargo:rerun-if-changed=cpp/wrapper_stub.cpp");
         println!("cargo:rerun-if-changed=cpp/wrapper.hpp");
         return;
@@ -163,6 +169,12 @@ fn main() {
     println!("cargo:rustc-link-lib=dylib=tt_metal");
     println!("cargo:rustc-link-lib=dylib=device");
     println!("cargo:rustc-link-lib=dylib=fmt");
+
+    // On macOS, use c++ instead of stdc++
+    #[cfg(target_os = "macos")]
+    println!("cargo:rustc-link-lib=dylib=c++");
+
+    #[cfg(not(target_os = "macos"))]
     println!("cargo:rustc-link-lib=dylib=stdc++");
 
     println!("cargo:rerun-if-changed=cpp/wrapper.cpp");
