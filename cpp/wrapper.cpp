@@ -91,7 +91,7 @@ static BufferType to_buffer_type(tt_buffer_type bt) {
     }
 }
 
-static std::variant<DataMovementConfig, ComputeConfig, EthernetConfig>
+static std::variant<DataMovementConfig, ComputeConfig>
 build_kernel_config(const tt_kernel_config* cfg) {
     std::vector<uint32_t> compile_args;
     if (cfg->compile_args && cfg->compile_args_len > 0) {
@@ -115,13 +115,7 @@ build_kernel_config(const tt_kernel_config* cfg) {
             cc.defines = std::move(defines);
             return cc;
         }
-        case TT_KERNEL_TYPE_ETHERNET: {
-            EthernetConfig ec;
-            ec.noc = to_noc(cfg->noc);
-            ec.compile_args = std::move(compile_args);
-            ec.defines = std::move(defines);
-            return ec;
-        }
+        case TT_KERNEL_TYPE_ETHERNET:
         case TT_KERNEL_TYPE_DATA_MOVEMENT:
         default: {
             DataMovementConfig dmc;
